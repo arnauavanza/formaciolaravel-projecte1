@@ -32,6 +32,23 @@ class AuthorApiTest extends TestCase
             ]);
     }
 
+    public function test_authors_can_be_paginated(): void
+    {
+        Author::factory()->count(2)->create();
+
+        $this->getJson('/api/authors?per_page=1')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('meta.per_page', 1);
+    }
+
+    public function test_author_list_per_page_is_validated(): void
+    {
+        $this->getJson('/api/authors?per_page=0')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['per_page']);
+    }
+
     public function test_author_can_be_created(): void
     {
         $response = $this->postJson('/api/authors', [

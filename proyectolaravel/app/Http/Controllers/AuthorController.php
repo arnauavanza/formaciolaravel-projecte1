@@ -12,7 +12,7 @@ class AuthorController extends Controller
 {
     public function index(AuthorIndexRequest $request)
     {
-        $perPage = $request->integer('per_page', 15);
+        $perPage = (int) ($request->validated()['per_page'] ?? 15);
 
         $authors = Author::query()
             ->orderBy('name')
